@@ -1,29 +1,63 @@
+import arcade
 
-import arcade  # Импортируем библиотеку Arcade
+# размер экрана и название
+width = 800
+height = 800
+title = "test"
 
-SCREEN_WIDTH = 800  # Устанавливаем ширину экрана
-SCREEN_HEIGHT = 600  # Устанавливаем высоту экрана
+movespeed = 450
 
-class MyGame(arcade.Window):  # Создаем класс игры, наследуемый от arcade.Window
 
-    def __init__(self, width, height):  # Определяем конструктор класса
-        super().__init__(width, height)  # Вызываем конструктор родительского класса
-        arcade.set_background_color(arcade.color.BABY_BLUE_EYES)  # Устанавливаем цвет фона
+class MyGame(arcade.Window):
+    def __init__(self):
+        super().__init__(width, height, title)
 
-    def setup(self):  # Определяем метод для настройки игры
-        pass
+        # background
+        arcade.set_background_color(arcade.color.SKY_BLUE)
 
-    def on_draw(self):  # Определяем метод для отрисовки экрана
-        arcade.start_render()  # Начинаем рендеринг
-        # Добавляем код отрисовки объектов и персонажей
+        # stats hero
+        self.moveX = 0
+        self.moveY = 0
+        self.xhero = 50
+        self.yhero = 100
 
-    def update(self, delta_time):  # Определяем метод для обновления игры
-        pass
+    def on_draw(self):  # функция для рисование персонажа
+        arcade.start_render()
+        arcade.draw_circle_filled(self.xhero, self.yhero, 25, arcade.color.RED)
 
-def main():  # Основная функция программы
-    game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT)  # Создаем объект игры
-    game.setup()  # Вызываем метод настройки игры
-    arcade.run()  # Запускаем игру
+    def on_key_press(self, key, modifiers):  # обработка нажатия клавиш
+        if key == arcade.key.LEFT:
+            self.moveX = -movespeed
+        elif key == arcade.key.RIGHT:
+            self.moveX = movespeed
+        elif key == arcade.key.UP:
+            self.moveY = movespeed
+        elif key == arcade.key.DOWN:
+            self.moveY = -movespeed
 
-if __name__ == "__main__":  # Проверяем, запущен ли файл напрямую
-    main()  # Вызываем основную функцию
+    def on_key_release(self, key, modifiers):
+        if key == arcade.key.LEFT or key == arcade.key.RIGHT:
+            self.moveX = 0
+        elif key == arcade.key.UP or key == arcade.key.DOWN:
+            self.moveY = 0
+
+    def update(self, delta_time):  # обновление координат и грань экрана
+        upX = self.xhero + self.moveX * delta_time
+        upY = self.yhero + self.moveY * delta_time
+        if upX > 800 or upX < 0:
+            self.xhero = width // 2
+            self.yhero = height // 2
+        if upY > 800 or upY < 0:
+            self.xhero = width // 2
+            self.yhero = height // 2
+        self.xhero += self.moveX * delta_time
+        self.yhero += self.moveY * delta_time
+
+
+# основа для запуска
+def main():
+    window = MyGame()
+    arcade.run()
+
+
+main()
